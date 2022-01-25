@@ -3,12 +3,10 @@ html, body, div, span, h1, h2, h3, h4, h5, h6, p, a, ol, ul, li, footer, header,
 	padding: 0;
 	border: 0;
 }
-
 html, body {
   min-height: 100vh;
   overflow-x: hidden;
 }
-
 body {
   background: #fff;
   font-size: 16px; 
@@ -17,17 +15,17 @@ body {
 ul, ol {
   list-style: none;
 }
-
 a, a:visited { 
   color: #000; 
   text-decoration: none;
 }
 
-input, select, div, textarea, span, section, main, aside {
+input, select, div, textarea, span, section, main, aside, ul {
   box-sizing: border-box;
 }
 button {
   border: none;
+  background-color: transparent;
   outline: none;
   cursor: pointer;
 }
