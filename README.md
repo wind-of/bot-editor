@@ -30,8 +30,16 @@ Editor: {
 #### Message
 ```
 MessageObject: {
+    state: String,
+    type: String, // "start" || "default" || "end"
+    nextState: String, // another MessageObject.state, required if Length(this.options.buttons).equals(0)
+    connections: MessageConnections,
     options: MessageOptions,
     view: MessageView
+}
+MessageConnections: {
+    input: Array,
+    output: Array
 }
 MessageOptions: {
     title: String,
@@ -39,10 +47,10 @@ MessageOptions: {
 }
 MessageView: {
     top: Number,
-    left: Number,
+    left: Number
 }
 ButtonObject: {
     text: String,
-    nextState: String
+    nextState: String // another MessageObject.state
 }
 ```

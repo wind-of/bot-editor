@@ -1,5 +1,5 @@
 <template>
-  <div class="editor-canvas-wrapper">
+  <div class="editor-canvas-wrapper" drag-scroll="truenp">
     <section class="editor-canvas">
       <div class="editor-canvas-inner-wrapper">
         <div class="message">
@@ -39,7 +39,6 @@ export default {
   background-position: -1px -1px;
 
   cursor: grab;
-
   &.grabbing {
     cursor: grabbing;
   }
