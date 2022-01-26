@@ -1,6 +1,8 @@
 <template>
-  <div class="editor-canvas-wrapper" drag-scroll="truenp">
-    <section class="editor-canvas">
+  <div class="editor-canvas-wrapper" @mousewheel="$emit('scroll', $event)">
+    <section class="editor-canvas" 
+      @mousedown="$emit('mousedown', $event)"
+      @mousemove="$emit('mousemove', $event)">
       <div class="editor-canvas-inner-wrapper">
         <div class="message">
           <div class="message__title-wrapper">
@@ -14,7 +16,10 @@
 
 <script>
 export default {
-  
+  name: "Canvas",
+  props: {
+    messages: Array
+  },
 }
 </script>
 
@@ -28,7 +33,6 @@ export default {
 .editor-canvas {
   width: 3000px;
   height: 2000px;
-  margin-top: 60px;
 
   background-image: 
     linear-gradient(#fafafa 1px,transparent 1px),
