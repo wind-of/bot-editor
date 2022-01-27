@@ -1,7 +1,7 @@
 <template>
   <div class="editor">
     <VueCanvas 
-      :messages="messageObjects" 
+      :messages="messages" 
       @mousedown="onMouseDown($event)"
       @mousemove="onMouseMove"
       @scroll="onCanvasScroll($event)"
@@ -12,6 +12,10 @@
 <script>
 import Toolbar from "@/components/editor/Toolbar.vue"
 import VueCanvas from "@/components/editor/Canvas.vue"
+
+const MESSAGE_TYPE_START = "message_type_start"
+const MESSAGE_TYPE_DEFAULT = "message_type_default"
+const MESSAGE_TYPE_END = "message_type_end"
 
 const SCALE_STEP = .08
 const MAX_SCALE = 1
@@ -33,7 +37,17 @@ export default {
         scrollX: EDITOR_DEFAULT_SCROLL_X,
         scrollY: EDITOR_DEFAULT_SCROLL_Y
       },
-      messageObjects: [],
+      messages: [{
+        state: "START_STATE",
+        type: MESSAGE_TYPE_START,
+        options: {
+          title: "Kekistan"
+        },
+        view: {
+          top: 1000,
+          left: 1500
+        }
+      }],
       previousMousePosition: null,
       canvas: null,
       innerCanvas: null
@@ -66,7 +80,8 @@ export default {
       this.updateCanvasGrabbing(true, event)
       window.addEventListener("mouseup", () => this.updateCanvasGrabbing(false), {once: true})
     },
-    onCanvasScroll({type, deltaX, deltaY}) {
+    onCanvasScroll({type, ctrlKey, deltaX, deltaY}) {
+      if(ctrlKey) return
       const [x, y] = type === EVENT_TYPE_SCROLL 
           ? [this.canvas.scrollLeft, this.canvas.scrollTop] 
           : [this.editor.scrollX + deltaX, this.editor.scrollY + deltaY]

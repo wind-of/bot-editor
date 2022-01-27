@@ -7,6 +7,19 @@
       @mousedown="$emit('mousedown', $event)"
       @mousemove="$emit('mousemove', $event)">
       <div class="editor-canvas-inner-wrapper">
+
+        <div 
+          class="message" 
+          v-for="message of messages" 
+          :key="message.view.top + '' + message.view.left"
+          :style="`top: ${message.view.top}px; left: ${message.view.left}px`"
+        >
+          <div class="message__title-wrapper">
+            <h3 class="message__title">{{ message.options.title }}</h3>
+          </div>
+          <div class="message__state">{{ message.state }}</div>
+        </div>
+
         <div class="message">
           <div class="message__title-wrapper">
             <h3 class="message__title">Entry</h3>
@@ -54,7 +67,7 @@ export default {
     width: 100%;
     height: 100%;
 
-    transition: .4s ease;
+    transition: .2s ease;
   }
 }
 
@@ -67,6 +80,7 @@ export default {
   border-radius: 5px;
 
   transition: .2s ease;
+  cursor: default;
 
   &:hover {
     border-color: cornflowerblue;
