@@ -1,5 +1,8 @@
 <template>
-  <div class="editor-canvas-wrapper" @mousewheel="$emit('scroll', $event)">
+  <div class="editor-canvas-wrapper" 
+    @scroll="$emit('scroll', $event)" 
+    @mousewheel="$emit('scroll', $event)"
+  >
     <section class="editor-canvas" 
       @mousedown="$emit('mousedown', $event)"
       @mousemove="$emit('mousemove', $event)">

@@ -18,6 +18,7 @@ const MAX_SCALE = 1
 const MIN_SCALE = .2
 const EDITOR_DEFAULT_SCROLL_X = 750
 const EDITOR_DEFAULT_SCROLL_Y = 750
+const EVENT_TYPE_SCROLL = "scroll"
 
 export default {
   components: {
@@ -46,8 +47,8 @@ export default {
       const MIN_VERTICAL_SCROLL = 0
       const MIN_HORIZONTAL_SCROLL = 0
 
-      x = Math.max(Math.min(x, MAX_VERTICAL_SCROLL), MIN_VERTICAL_SCROLL)
-      y = Math.max(Math.min(y, MAX_HORIZONTAL_SCROLL), MIN_HORIZONTAL_SCROLL)
+      x = Math.max(Math.min(x, MAX_HORIZONTAL_SCROLL), MIN_HORIZONTAL_SCROLL)
+      y = Math.max(Math.min(y, MAX_VERTICAL_SCROLL), MIN_VERTICAL_SCROLL)
 
       return [x, y]
     },
@@ -65,15 +66,18 @@ export default {
       this.updateCanvasGrabbing(true, event)
       window.addEventListener("mouseup", () => this.updateCanvasGrabbing(false), {once: true})
     },
-    onCanvasScroll(e) {
-      console.log(e)
+    onCanvasScroll({type, deltaX, deltaY}) {
+      const [x, y] = type === EVENT_TYPE_SCROLL 
+          ? [this.canvas.scrollLeft, this.canvas.scrollTop] 
+          : [this.editor.scrollX + deltaX, this.editor.scrollY + deltaY]
+      this.updateEditorPosition(x, y, false)
     },
 
-    updateEditorPosition(x = EDITOR_DEFAULT_SCROLL_X, y = EDITOR_DEFAULT_SCROLL_Y) {
+    updateEditorPosition(x = EDITOR_DEFAULT_SCROLL_X, y = EDITOR_DEFAULT_SCROLL_Y, shouldScroll = true) {
       [x, y] = this.filterScrollValues(x, y)
       this.editor.scrollX = x
       this.editor.scrollY = y
-      this.$el.querySelector(".editor-canvas-wrapper").scrollTo(x, y)
+      if(shouldScroll) this.canvas.scrollTo(x, y)
     },
     updateEditorScale(deltaY) {
       this.editor.scale = Math.min(Math.max(this.editor.scale - Math.sign(deltaY) * SCALE_STEP, MIN_SCALE), MAX_SCALE)
@@ -93,11 +97,7 @@ export default {
     this.innerCanvas = this.canvas.querySelector(".editor-canvas-inner-wrapper")
     this.updateEditorPosition(this.editor.scrollX, this.editor.scrollY)
 
-    this.$el.onwheel = ({ctrlKey, deltaY}) => {
-      if(!ctrlKey) return true
-      this.updateEditorScale(deltaY)
-      return false
-    }
+    this.$el.onwheel = ({ctrlKey, deltaY}) => ctrlKey ? (this.updateEditorScale(deltaY), false) : true
   }
 }
 </script>
