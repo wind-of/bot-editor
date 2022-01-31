@@ -31,6 +31,7 @@ Editor: {
 ```
 MessageObject: {
     state: String,
+    id: String,
     type: String, // "start" || "default" || "end"
     nextState: String, // another MessageObject.state, required if Length(this.options.buttons).equals(0)
     connections: MessageConnections,

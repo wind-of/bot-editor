@@ -10,8 +10,12 @@
 </template>
 
 <script>
+import Line from 'leader-line-vue';
+
 import Toolbar from "@/components/editor/Toolbar.vue"
 import VueCanvas from "@/components/editor/Canvas.vue"
+
+const uid = () => `m-${Math.abs(Math.random() * 1000000000000 | 0)}`
 
 const MESSAGE_TYPE_START = "message_type_start"
 const MESSAGE_TYPE_DEFAULT = "message_type_default"
@@ -23,6 +27,41 @@ const MIN_SCALE = .2
 const EDITOR_DEFAULT_SCROLL_X = 750
 const EDITOR_DEFAULT_SCROLL_Y = 750
 const EVENT_TYPE_SCROLL = "scroll"
+
+const messages = [
+  {
+    id: "m-1",
+    state: "START_STATE",
+    type: MESSAGE_TYPE_START,
+    connections: {
+      input: [],
+      output: ["m-2"]
+    },
+    options: {
+      title: "Kekistan"
+    },
+    view: {
+      top: 1000,
+      left: 1500
+    }
+  },
+  {
+    id: "m-2",
+    state: "END_STATE",
+    type: MESSAGE_TYPE_END,
+    connections: {
+      input: ["m-1"],
+      output: []
+    },
+    options: {
+      title: "Пора Домой"
+    },
+    view: {
+      top: 1100,
+      left: 1800
+    }
+  }
+]
 
 export default {
   components: {
@@ -37,17 +76,8 @@ export default {
         scrollX: EDITOR_DEFAULT_SCROLL_X,
         scrollY: EDITOR_DEFAULT_SCROLL_Y
       },
-      messages: [{
-        state: "START_STATE",
-        type: MESSAGE_TYPE_START,
-        options: {
-          title: "Kekistan"
-        },
-        view: {
-          top: 1000,
-          left: 1500
-        }
-      }],
+      messages,
+      lines: [],
       previousMousePosition: null,
       canvas: null,
       innerCanvas: null
@@ -66,6 +96,24 @@ export default {
 
       return [x, y]
     },
+    preventDefaultZooming() {
+      this.$el.onwheel = ({ctrlKey, deltaY}) => ctrlKey ? (this.updateEditorScale(deltaY), false) : true
+    },
+    setSvgLines() {
+      this.messages
+        .filter(({connections}) => connections.output.length)
+        .forEach(({connections: {output}, id: startId}) => 
+            output.forEach(
+              (endId) => {
+                const start = this.$el.querySelector(`#${startId}`)
+                const end = this.$el.querySelector(`#${endId}`)
+                this.lines.push(
+                  Line.setLine(start, end)
+                )
+              }
+            )
+          )
+    },
 
     onMouseMove({ clientX: x, clientY: y }) {
       if(!this.grabbingCanvas) return
@@ -83,20 +131,25 @@ export default {
     onCanvasScroll({type, ctrlKey, deltaX, deltaY}) {
       if(ctrlKey) return
       const [x, y] = type === EVENT_TYPE_SCROLL 
-          ? [this.canvas.scrollLeft, this.canvas.scrollTop] 
+          ? this.getActualCanvasScroll()
           : [this.editor.scrollX + deltaX, this.editor.scrollY + deltaY]
       this.updateEditorPosition(x, y, false)
+    },
+
+    getActualCanvasScroll() {
+      return [this.canvas.scrollLeft, this.canvas.scrollTop]
     },
 
     updateEditorPosition(x = EDITOR_DEFAULT_SCROLL_X, y = EDITOR_DEFAULT_SCROLL_Y, shouldScroll = true) {
       [x, y] = this.filterScrollValues(x, y)
       this.editor.scrollX = x
       this.editor.scrollY = y
-      if(shouldScroll) this.canvas.scrollTo(x, y)
+      this.updateLines()
+      shouldScroll && this.canvas.scrollTo(x, y)
     },
     updateEditorScale(deltaY) {
       this.editor.scale = Math.min(Math.max(this.editor.scale - Math.sign(deltaY) * SCALE_STEP, MIN_SCALE), MAX_SCALE)
-      this.$el.querySelector(".editor-canvas-inner-wrapper").style.transform = `scale3d(${this.editor.scale}, ${this.editor.scale}, 1)`
+      this.innerCanvas.style.transform = `scale3d(${this.editor.scale}, ${this.editor.scale}, 1)`
     },
     updateCanvasGrabbing(flag, e) {
       this.grabbingCanvas = flag
@@ -105,14 +158,17 @@ export default {
       const { clientX: x, clientY: y } = e
       this.previousMousePosition = {x, y}
     },
+    updateLines() {
+      this.lines.forEach((line) => line.position())
+    },
   },
 
   mounted() {
     this.canvas = this.$el.querySelector(".editor-canvas-wrapper")
     this.innerCanvas = this.canvas.querySelector(".editor-canvas-inner-wrapper")
     this.updateEditorPosition(this.editor.scrollX, this.editor.scrollY)
-
-    this.$el.onwheel = ({ctrlKey, deltaY}) => ctrlKey ? (this.updateEditorScale(deltaY), false) : true
+    this.preventDefaultZooming()
+    this.setSvgLines()
   }
 }
 </script>

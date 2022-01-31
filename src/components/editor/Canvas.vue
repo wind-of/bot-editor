@@ -10,20 +10,17 @@
 
         <div 
           class="message" 
-          v-for="message of messages" 
-          :key="message.view.top + '' + message.view.left"
-          :style="`top: ${message.view.top}px; left: ${message.view.left}px`"
+          :id="id"
+          v-for="{ id, view, options, state } of messages" 
+          :key="view.top + '' + view.left"
+          :style="`top: ${view.top}px; left: ${view.left}px`"
+
+          @click="$emit('messageClick', {$event, id})"
         >
           <div class="message__title-wrapper">
-            <h3 class="message__title">{{ message.options.title }}</h3>
+            <h3 class="message__title">{{ options.title }}</h3>
           </div>
-          <div class="message__state">{{ message.state }}</div>
-        </div>
-
-        <div class="message">
-          <div class="message__title-wrapper">
-            <h3 class="message__title">Entry</h3>
-          </div>
+          <div class="message__state">{{ state }}</div>
         </div>
       </div>
     </section>
