@@ -52,6 +52,7 @@ MessageView: {
 }
 ButtonObject: {
     text: String,
-    nextState: String // another MessageObject.state
+    nextState: String,
+    nextStateId: String
 }
 ```

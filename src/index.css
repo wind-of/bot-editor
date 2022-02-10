@@ -1,3 +1,8 @@
+:root {
+  --light-blue: #6494ed;
+  --light-grey: #e1e1e1;
+}
+
 html, body, div, span, h1, h2, h3, h4, h5, h6, p, a, ol, ul, li, footer, header, input, textarea, select, button, aside, main, section {
 	margin: 0;
 	padding: 0;

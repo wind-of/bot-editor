@@ -7,32 +7,27 @@
       @mousedown="$emit('mousedown', $event)"
       @mousemove="$emit('mousemove', $event)">
       <div class="editor-canvas-inner-wrapper">
-
-        <div 
-          class="message" 
-          :id="id"
-          v-for="{ id, view, options, state } of messages" 
-          :key="view.top + '' + view.left"
-          :style="`top: ${view.top}px; left: ${view.left}px`"
-
-          @click="$emit('messageClick', {$event, id})"
-        >
-          <div class="message__title-wrapper">
-            <h3 class="message__title">{{ options.title }}</h3>
-          </div>
-          <div class="message__state">{{ state }}</div>
-        </div>
+        <CanvasMessage 
+          v-for="(message, i) of messages" 
+          :key="message.view.top + `${i}` + message.view.left"
+          :message="message"
+          @click="$emit('messageClick', {$event, id: message.id})"
+        />
       </div>
     </section>
   </div>
 </template>
 
 <script>
+import CanvasMessage from "@/components/editor/canvas/CanvasMessage.vue"
 export default {
   name: "Canvas",
   props: {
     messages: Array
   },
+  components: {
+    CanvasMessage
+  }
 }
 </script>
 
@@ -65,48 +60,6 @@ export default {
     height: 100%;
 
     transition: .2s ease;
-  }
-}
-
-.message {
-  box-sizing: border-box;
-  position: relative;
-  width: 200px;
-
-  border: 1px solid #e1e1e1;
-  border-radius: 5px;
-
-  transition: .2s ease;
-  cursor: default;
-
-  &:hover {
-    border-color: cornflowerblue;
-  }
-  &:hover &__title {
-    color: cornflowerblue;
-    border-color: cornflowerblue;
-  }
-
-  &__title { 
-    padding: 0 5px;
-
-    font-size: 16px;
-    font-weight: 400;
-
-    border: 5px solid #e1e1e1;
-    border-top: none;
-    border-bottom: none;
-    border-right: none;
-
-    transition: .2s ease;
-
-    &-wrapper {
-      padding: 10px 0;
-      background-color: #fafafa;
-      border-radius: 5px;
-
-      cursor: pointer;
-    }
   }
 }
 </style>

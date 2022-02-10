@@ -1,0 +1,1 @@
+export const uid = () => `m-${Math.abs(Math.random() * 1000000000000 | 0)}`

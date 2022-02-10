@@ -5,63 +5,22 @@
       @mousedown="onMouseDown($event)"
       @mousemove="onMouseMove"
       @scroll="onCanvasScroll($event)"
+      @messageClick="onMessageClick"
     />
   </div>
 </template>
 
 <script>
-import Line from 'leader-line-vue';
-
 import Toolbar from "@/components/editor/Toolbar.vue"
 import VueCanvas from "@/components/editor/Canvas.vue"
 
-const uid = () => `m-${Math.abs(Math.random() * 1000000000000 | 0)}`
+import { 
+  SCALE_STEP, MAX_SCALE, MIN_SCALE, 
+  EDITOR_DEFAULT_SCROLL_X, EDITOR_DEFAULT_SCROLL_Y, 
+  EVENT_TYPE_SCROLL
+} from "@/constants.js"
 
-const MESSAGE_TYPE_START = "message_type_start"
-const MESSAGE_TYPE_DEFAULT = "message_type_default"
-const MESSAGE_TYPE_END = "message_type_end"
-
-const SCALE_STEP = .08
-const MAX_SCALE = 1
-const MIN_SCALE = .2
-const EDITOR_DEFAULT_SCROLL_X = 750
-const EDITOR_DEFAULT_SCROLL_Y = 750
-const EVENT_TYPE_SCROLL = "scroll"
-
-const messages = [
-  {
-    id: "m-1",
-    state: "START_STATE",
-    type: MESSAGE_TYPE_START,
-    connections: {
-      input: [],
-      output: ["m-2"]
-    },
-    options: {
-      title: "Kekistan"
-    },
-    view: {
-      top: 1000,
-      left: 1500
-    }
-  },
-  {
-    id: "m-2",
-    state: "END_STATE",
-    type: MESSAGE_TYPE_END,
-    connections: {
-      input: ["m-1"],
-      output: []
-    },
-    options: {
-      title: "Пора Домой"
-    },
-    view: {
-      top: 1100,
-      left: 1800
-    }
-  }
-]
+import { messages } from "@/messages.js"
 
 export default {
   components: {
@@ -77,7 +36,6 @@ export default {
         scrollY: EDITOR_DEFAULT_SCROLL_Y
       },
       messages,
-      lines: [],
       previousMousePosition: null,
       canvas: null,
       innerCanvas: null
@@ -98,21 +56,6 @@ export default {
     },
     preventDefaultZooming() {
       this.$el.onwheel = ({ctrlKey, deltaY}) => ctrlKey ? (this.updateEditorScale(deltaY), false) : true
-    },
-    setSvgLines() {
-      this.messages
-        .filter(({connections}) => connections.output.length)
-        .forEach(({connections: {output}, id: startId}) => 
-            output.forEach(
-              (endId) => {
-                const start = this.$el.querySelector(`#${startId}`)
-                const end = this.$el.querySelector(`#${endId}`)
-                this.lines.push(
-                  Line.setLine(start, end)
-                )
-              }
-            )
-          )
     },
 
     onMouseMove({ clientX: x, clientY: y }) {
@@ -135,6 +78,9 @@ export default {
           : [this.editor.scrollX + deltaX, this.editor.scrollY + deltaY]
       this.updateEditorPosition(x, y, false)
     },
+    onMessageClick({ event, id }) {
+
+    },
 
     getActualCanvasScroll() {
       return [this.canvas.scrollLeft, this.canvas.scrollTop]
@@ -144,7 +90,6 @@ export default {
       [x, y] = this.filterScrollValues(x, y)
       this.editor.scrollX = x
       this.editor.scrollY = y
-      this.updateLines()
       shouldScroll && this.canvas.scrollTo(x, y)
     },
     updateEditorScale(deltaY) {
@@ -158,9 +103,6 @@ export default {
       const { clientX: x, clientY: y } = e
       this.previousMousePosition = {x, y}
     },
-    updateLines() {
-      this.lines.forEach((line) => line.position())
-    },
   },
 
   mounted() {
@@ -168,7 +110,6 @@ export default {
     this.innerCanvas = this.canvas.querySelector(".editor-canvas-inner-wrapper")
     this.updateEditorPosition(this.editor.scrollX, this.editor.scrollY)
     this.preventDefaultZooming()
-    this.setSvgLines()
   }
 }
 </script>
