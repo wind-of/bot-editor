@@ -5,7 +5,8 @@
   >
     <section class="editor-canvas" 
       @mousedown="$emit('mousedown', $event)"
-      @mousemove="$emit('mousemove', $event)">
+      @mousemove="$emit('mousemove', $event)"
+    >
       <div class="editor-canvas-inner-wrapper">
         <CanvasMessage 
           v-for="(message, i) of messages" 
@@ -34,7 +35,7 @@ export default {
 <style lang="scss">
 .editor-canvas-wrapper {
   display: block;
-  max-width: 100vw;
+  max-width: 78vw;
   max-height: 100vh;
   overflow: scroll;
 }

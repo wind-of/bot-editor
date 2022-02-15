@@ -1,6 +1,7 @@
 :root {
   --light-blue: #6494ed;
   --light-grey: #e1e1e1;
+  --almost-white: #fafafa;
 }
 
 html, body, div, span, h1, h2, h3, h4, h5, h6, p, a, ol, ul, li, footer, header, input, textarea, select, button, aside, main, section {
@@ -25,7 +26,7 @@ a, a:visited {
   text-decoration: none;
 }
 
-input, select, div, textarea, span, section, main, aside, ul {
+input, select, div, textarea, span, section, main, aside, nav, ul {
   box-sizing: border-box;
 }
 button {

@@ -1,9 +1,9 @@
 <template>
   <div id="application">
-    <aside id="navigation">
+    <nav id="navigation">
       <router-link to="/"><h1 class="application__title">BotEditor</h1></router-link>
       <router-link to="/editor"><div class="navigation__button"><img src="./assets/sidebar/editor-icon.svg" alt="">Editor</div></router-link>
-    </aside>
+    </nav>
     <main id="main">
       <router-view/>
     </main>
