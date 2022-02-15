@@ -33,7 +33,7 @@ MessageObject: {
     state: String,
     id: String,
     type: String, // "start" || "default" || "end"
-    nextState: String, // another MessageObject.state, required if Length(this.options.buttons).equals(0)
+    nextState: String,
     connections: MessageConnections,
     options: MessageOptions,
     view: MessageView
@@ -43,6 +43,7 @@ MessageConnections: {
     output: Array
 }
 MessageOptions: {
+    text: String,
     title: String,
     buttons: Array
 }

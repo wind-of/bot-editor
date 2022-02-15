@@ -20,6 +20,7 @@ function createMessage(params) {
       output: []
     },
     options: {
+      text: "Some Long text for the message. Lorem Ipsum Dolor Sit Amet Consectetur Adipisking Elit.",
       title: "Some Title",
       buttons: [
         createButton()
