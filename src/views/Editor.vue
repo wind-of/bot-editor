@@ -1,17 +1,20 @@
 <template>
-  <div class="editor">
-    <VueCanvas 
-      :messages="messages" 
-      @mousedown="onMouseDown($event)"
-      @mousemove="onMouseMove"
-      @scroll="onCanvasScroll($event)"
-      @messageClick="onMessageClick"
-    />
+  <div class="editor-wrapper">
+    <div class="editor">
+      <VueCanvas 
+        :messages="messages" 
+        @mousedown="onMouseDown($event)"
+        @mousemove="onMouseMove"
+        @scroll="onCanvasScroll($event)"
+        @messageClick="onMessageClick"
+      />
+    </div>
+    <Sidebar :selectedMessage="selectedMessage"/>
   </div>
 </template>
 
 <script>
-import Toolbar from "@/components/editor/Toolbar.vue"
+import Sidebar from "@/components/editor/Sidebar.vue"
 import VueCanvas from "@/components/editor/Canvas.vue"
 
 import { 
@@ -24,7 +27,7 @@ import { messages } from "@/messages.js"
 
 export default {
   components: {
-    Toolbar,
+    Sidebar,
     VueCanvas,
   },
   data() {
@@ -36,6 +39,7 @@ export default {
         scrollY: EDITOR_DEFAULT_SCROLL_Y
       },
       messages,
+      selectedMessage: undefined,
       previousMousePosition: null,
       canvas: null,
       innerCanvas: null
@@ -79,7 +83,8 @@ export default {
       this.updateEditorPosition(x, y, false)
     },
     onMessageClick({ event, id }) {
-
+      this.selectedMessage = this.messages.find(({ id: id_ }) => id_ === id)
+      this.$el.querySelector(`#${id}`).classList.add("active")
     },
 
     getActualCanvasScroll() {
@@ -116,22 +121,7 @@ export default {
 
 <style lang="scss">
 .editor {
-  max-width: 100%;
-  max-height: 100%;
-}
-
-.toolbar, .editor {
   width: 100%;
-}
-.toolbar {
-  box-sizing: border-box;
-  height: 60px;
-  padding: 0 20px; 
-
-  display: flex;
-  align-items: center;
-}
-.canvas {
   height: 100%;
 }
 </style>
